@@ -1,0 +1,27 @@
+{
+  "data": {
+    "b2c_get_open_orders": {
+      "orders": [
+        {
+          "order": {
+            "order_id": "order-1",
+            "plate": "BAB123",
+            "status": "OPEN",
+            "start_date": "2026-09-06T12:00:00Z",
+            "end_date": null
+          },
+          "lot": {
+            "lot_id": "lot-1",
+            "name": "ZCarré",
+            "address": "Example Street 1"
+          },
+          "price": {
+            "parking_price": "3.50",
+            "discounted_parking_price": null,
+            "currency": "EUR"
+          }
+        }
+      ]
+    }
+  }
+}

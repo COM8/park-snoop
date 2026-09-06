@@ -1,0 +1,10 @@
+[
+  {
+    "id": "process-1",
+    "area": {"displayName": "ZCarré"},
+    "start": "2026-09-06T12:00:00Z",
+    "parkingFee": {"value": 2.5, "currency": "EUR"},
+    "plate": "BAB123",
+    "isPending": true
+  }
+]

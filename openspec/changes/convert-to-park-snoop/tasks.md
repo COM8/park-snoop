@@ -1,6 +1,6 @@
 ## 1. Project and test foundation
 
-- [ ] 1.1 Rename the blueprint domain, manifest, translations, HACS metadata, and integration-facing names to Park Snoop, and verify Hassfest and HACS validation pass.
+- [x] 1.1 Rename the blueprint domain, manifest, translations, HACS metadata, and integration-facing names to Park Snoop, and verify Hassfest and HACS validation pass.
 - [x] 1.2 Add the Home Assistant custom-component pytest dependencies and test configuration, and verify a minimal integration setup test runs without network access.
 - [ ] 1.3 Replace or remove blueprint-only platforms, API client code, scripts, and template documentation, and verify no runtime reference to `integration_blueprint` remains with `rg`.
 
@@ -12,16 +12,16 @@
 
 ## 3. Provider framework and initial adapters
 
-- [ ] 3.1 Implement the abstract provider contract, registry, typed errors, batching declaration, and provider-owned rate-limit policy interface with public docstrings, and verify a fake provider conforms in unit tests.
-- [ ] 3.2 Implement the BetterPark adapter using the evidenced public plate-process endpoint and fixture-based response normalization, and verify tests cover active, empty, malformed, and rate-limited responses without live requests.
-- [ ] 3.3 Implement the ParkDepot/Wemolino adapter using the evidenced open-orders GraphQL request and fixture-based normalization, and verify tests cover batched plates, empty orders, GraphQL errors, and rate limiting without live requests.
-- [ ] 3.4 Add a disabled example provider and `docs/adding_a_provider.md` that document the complete extension flow, and verify the guide covers registration, rate limits, normalization, fixtures, and tests.
+- [x] 3.1 Implement the abstract provider contract, registry, typed errors, batching declaration, and provider-owned rate-limit policy interface with public docstrings, and verify a fake provider conforms in unit tests.
+- [x] 3.2 Implement the BetterPark adapter using the evidenced public plate-process endpoint and fixture-based response normalization, and verify tests cover active, empty, malformed, and rate-limited responses without live requests.
+- [x] 3.3 Implement the ParkDepot/Wemolino adapter using the evidenced open-orders GraphQL request and fixture-based normalization, and verify tests cover batched plates, empty orders, GraphQL errors, and rate limiting without live requests.
+- [x] 3.4 Add a disabled example provider and `docs/adding_a_provider.md` that document the complete extension flow, and verify the guide covers registration, rate limits, normalization, fixtures, and tests.
 
 ## 4. Scheduler, retry, and aggregation runtime
 
-- [ ] 4.1 Implement one cancellable async config-entry scheduler with a deduplicated due-time queue and clean unload behavior, and verify scheduler tests prove no duplicate `(plate, provider)` job runs concurrently.
-- [ ] 4.2 Implement provider query coalescing for batch-capable providers and individual dispatch for other providers, and verify fake-provider tests assert the expected request shape.
-- [ ] 4.3 Implement central enforcement of provider-owned proactive limits, Retry-After cooldowns, one-minute fallback requeueing, and bounded transient retry backoff with jitter, and verify deterministic clock tests for each path.
+- [x] 4.1 Implement one cancellable async config-entry scheduler with a deduplicated due-time queue and clean unload behavior, and verify scheduler tests prove no duplicate `(plate, provider)` job runs concurrently.
+- [x] 4.2 Implement provider query coalescing for batch-capable providers and individual dispatch for other providers, and verify fake-provider tests assert the expected request shape.
+- [x] 4.3 Implement central enforcement of provider-owned proactive limits, Retry-After cooldowns, one-minute fallback requeueing, and bounded transient retry backoff with jitter, and verify deterministic clock tests for each path.
 - [ ] 4.4 Implement session lifecycle/closure policy and plate aggregation, including possibly-active sessions, `multiple_sessions`, currency-separated fee totals, and completeness indicators, and verify table-driven unit tests cover the specified scenarios.
 
 ## 5. Home Assistant entities and diagnostics
