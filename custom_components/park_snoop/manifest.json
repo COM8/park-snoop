@@ -1,0 +1,12 @@
+{
+  "domain": "park_snoop",
+  "name": "Park Snoop",
+  "codeowners": [
+    "@COM8"
+  ],
+  "config_flow": true,
+  "documentation": "https://github.com/COM8/park-snoop",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/COM8/park-snoop/issues",
+  "version": "0.1.0"
+}

@@ -1,13 +1,13 @@
 ## 1. Project and test foundation
 
 - [ ] 1.1 Rename the blueprint domain, manifest, translations, HACS metadata, and integration-facing names to Park Snoop, and verify Hassfest and HACS validation pass.
-- [ ] 1.2 Add the Home Assistant custom-component pytest dependencies and test configuration, and verify a minimal integration setup test runs without network access.
+- [x] 1.2 Add the Home Assistant custom-component pytest dependencies and test configuration, and verify a minimal integration setup test runs without network access.
 - [ ] 1.3 Replace or remove blueprint-only platforms, API client code, scripts, and template documentation, and verify no runtime reference to `integration_blueprint` remains with `rg`.
 
 ## 2. Domain model and plate configuration
 
-- [ ] 2.1 Implement typed, documented models for normalized plates, provider results, sessions, fee meaning, session confidence, and aggregate state, and verify unit tests cover concurrent sessions, unknown fees, and mixed currencies.
-- [ ] 2.2 Implement the initial config flow and options flow for adding, editing, and removing plates with display name, notes, frequency, and provider selection, and verify configuration-flow tests cover defaults and validation failures.
+- [x] 2.1 Implement typed, documented models for normalized plates, provider results, sessions, fee meaning, session confidence, and aggregate state, and verify unit tests cover concurrent sessions, unknown fees, and mixed currencies.
+- [x] 2.2 Implement the initial config flow and options flow for adding, editing, and removing plates with display name, notes, frequency, and provider selection, and verify configuration-flow tests cover defaults and validation failures.
 - [ ] 2.3 Implement stable plate-derived identifiers and safe runtime reconfiguration/removal, and verify a rename preserves entity IDs while removal unloads the plate's entities and scheduled work.
 
 ## 3. Provider framework and initial adapters

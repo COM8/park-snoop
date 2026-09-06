@@ -2,7 +2,7 @@
     "config": {
         "step": {
             "user": {
-                "description": "If you need help with the configuration have a look here: {documentation_url}",
+                "description": "Configure Park Snoop. Documentation: {documentation_url}",
                 "data": {
                     "username": "Username",
                     "password": "Password"
