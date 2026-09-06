@@ -1,0 +1,7 @@
+This is a Home Assistant template repository for an integration I install via HACS. I'd now like to convert it to an integration doing the following. In `external` I have two external repos
+  for how to check if a specific license plate is parking in a parking lot. There are more provider than those two. The integration for HASS should allow the user to register license plates with an optional name
+  and notes, check frequency (default = 5) and which services should be checked (default =  all). The integration then checks all registered license plates against all provider APIs. Since the APIs differ so
+  much, the results get transfered to an intermediate format with all concrete providers implementing an abstract class so it is easy to extend it in the future with more providers. I'm not sure about this: In
+  HASS I would expect a license plate to be a "device" with properties like the current state, last checked, a button to manually request a recheck. Does this "device" level make sense or is there a better
+  concept for it? License plates are checked by a worker so in case one is due to be rechecked, it's enqueued as task for that worker. Every API has also rate limits we need to keep in mind. They should be also
+  provided by the concrete implementation for that API. In case we hit an API rate limit, or the worker expects to hit one, the query gets pushed back by 1 minute and then requeued to be performed again.
