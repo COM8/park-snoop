@@ -2,7 +2,7 @@
 
 - [x] 1.1 Rename the blueprint domain, manifest, translations, HACS metadata, and integration-facing names to Park Snoop, and verify Hassfest and HACS validation pass.
 - [x] 1.2 Add the Home Assistant custom-component pytest dependencies and test configuration, and verify a minimal integration setup test runs without network access.
-- [ ] 1.3 Replace or remove blueprint-only platforms, API client code, scripts, and template documentation, and verify no runtime reference to `integration_blueprint` remains with `rg`.
+- [x] 1.3 Replace or remove blueprint-only platforms, API client code, scripts, and template documentation, and verify no runtime reference to `integration_blueprint` remains with `rg`.
 
 ## 2. Domain model and plate configuration
 
@@ -22,7 +22,7 @@
 - [x] 4.1 Implement one cancellable async config-entry scheduler with a deduplicated due-time queue and clean unload behavior, and verify scheduler tests prove no duplicate `(plate, provider)` job runs concurrently.
 - [x] 4.2 Implement provider query coalescing for batch-capable providers and individual dispatch for other providers, and verify fake-provider tests assert the expected request shape.
 - [x] 4.3 Implement central enforcement of provider-owned proactive limits, Retry-After cooldowns, one-minute fallback requeueing, and bounded transient retry backoff with jitter, and verify deterministic clock tests for each path.
-- [ ] 4.4 Implement session lifecycle/closure policy and plate aggregation, including possibly-active sessions, `multiple_sessions`, currency-separated fee totals, and completeness indicators, and verify table-driven unit tests cover the specified scenarios.
+- [x] 4.4 Implement session lifecycle/closure policy and plate aggregation, including possibly-active sessions, `multiple_sessions`, currency-separated fee totals, and completeness indicators, and verify table-driven unit tests cover the specified scenarios.
 
 ## 5. Home Assistant entities and diagnostics
 
@@ -33,7 +33,7 @@
 
 ## 6. User documentation and continuous validation
 
-- [ ] 6.1 Rewrite README.md for normal users with HACS installation from `COM8/park-snoop`, setup, entities, manual checks, fee semantics, limitations, and privacy guidance, and verify it contains no provider-authoring deep dive.
-- [ ] 6.2 Update issue templates and contributor-facing references from the blueprint project to Park Snoop, and verify all repository links target `COM8/park-snoop` where applicable.
-- [ ] 6.3 Add a GitHub Actions test job running the full offline test suite on pull requests and default-branch pushes while retaining Ruff, Hassfest, and HACS checks, and verify the workflow syntax and local test command succeed.
+- [x] 6.1 Rewrite README.md for normal users with HACS installation from `COM8/park-snoop`, setup, entities, manual checks, fee semantics, limitations, and privacy guidance, and verify it contains no provider-authoring deep dive.
+- [x] 6.2 Update issue templates and contributor-facing references from the blueprint project to Park Snoop, and verify all repository links target `COM8/park-snoop` where applicable.
+- [x] 6.3 Add a GitHub Actions test job running the full offline test suite on pull requests and default-branch pushes while retaining Ruff, Hassfest, and HACS checks, and verify the workflow syntax and local test command succeed.
 - [ ] 6.4 Run formatting, linting, all tests, Hassfest, HACS validation, and strict OpenSpec validation; fix all reported issues and record the final commands/results in the implementation handoff.
