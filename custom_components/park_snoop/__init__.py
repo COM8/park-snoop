@@ -50,6 +50,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     runtime = ParkSnoopRuntime(scheduler, plates)
     scheduler.set_result_listener(runtime.async_handle_results)
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = runtime
+    entry.async_on_unload(entry.add_update_listener(_async_entry_updated))
     await runtime.async_start()
     await hass.config_entries.async_forward_entry_setups(
         entry, ["binary_sensor", "button", "sensor"]
@@ -65,3 +66,8 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     runtime = hass.data[DOMAIN].pop(entry.entry_id)
     await runtime.async_stop()
     return unloaded
+
+
+async def _async_entry_updated(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Reload platforms so changed or removed plate records rebuild cleanly."""
+    await hass.config_entries.async_reload(entry.entry_id)
