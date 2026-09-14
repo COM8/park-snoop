@@ -35,6 +35,7 @@ async def async_setup_entry(
             ParkingStatusSensor(runtime, plate),
             ActiveSessionsSensor(runtime, plate),
             LastCheckSensor(runtime, plate),
+            NextCheckSensor(runtime, plate),
         )
     ]
     async_add_entities(entities)
@@ -124,6 +125,22 @@ class LastCheckSensor(_PlateEntity):
     def native_value(self) -> datetime | None:
         """Return the cached last-check timestamp without provider I/O."""
         return self._runtime.last_check_for(self._plate.identifier)
+
+
+class NextCheckSensor(_PlateEntity):
+    """Expose the next configured monitoring deadline as a diagnostic timestamp."""
+
+    _attr_name = "Next check"
+    _attr_entity_category = "diagnostic"
+
+    def __init__(self, runtime: ParkSnoopRuntime, plate: Plate) -> None:
+        """Create the next-check diagnostic timestamp for one plate."""
+        super().__init__(runtime, plate, "next_check")
+
+    @property
+    def native_value(self) -> datetime:
+        """Return the cached cadence deadline without provider I/O."""
+        return self._runtime.next_check_for(self._plate.identifier)
 
 
 class FeeTotalSensor(_PlateEntity):

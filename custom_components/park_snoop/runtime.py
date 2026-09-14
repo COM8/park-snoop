@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING
 
 from .models import (
@@ -55,6 +55,12 @@ class ParkSnoopRuntime:
             result.checked_at for result in self._results.get(plate_id, {}).values()
         ]
         return max(checks, default=None)
+
+    def next_check_for(self, plate_id: str) -> datetime:
+        """Return the next configured cadence deadline for one plate."""
+        plate = self._plates[plate_id]
+        last_check = self.last_check_for(plate_id) or datetime.now(UTC)
+        return last_check + timedelta(minutes=plate.frequency_minutes)
 
     async def async_handle_results(self, results: tuple[ProviderResult, ...]) -> None:
         """Cache normalized results for entity properties without retaining payloads."""
