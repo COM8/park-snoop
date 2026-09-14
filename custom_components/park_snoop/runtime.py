@@ -74,3 +74,9 @@ class ParkSnoopRuntime:
     async def async_stop(self) -> None:
         """Stop all scheduler work when Home Assistant unloads the entry."""
         await self.scheduler.async_stop()
+
+    async def async_request_recheck(self, plate_id: str) -> None:
+        """Request immediate eligible work for every provider selected by a plate."""
+        plate = self._plates[plate_id]
+        for provider_id in plate.provider_ids:
+            await self.scheduler.async_request_now(plate, provider_id)

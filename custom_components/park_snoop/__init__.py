@@ -51,13 +51,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     scheduler.set_result_listener(runtime.async_handle_results)
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = runtime
     await runtime.async_start()
-    await hass.config_entries.async_forward_entry_setups(entry, ["sensor"])
+    await hass.config_entries.async_forward_entry_setups(
+        entry, ["binary_sensor", "button", "sensor"]
+    )
     return True
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a Park Snoop config entry."""
-    unloaded = await hass.config_entries.async_unload_platforms(entry, ["sensor"])
+    unloaded = await hass.config_entries.async_unload_platforms(
+        entry, ["binary_sensor", "button", "sensor"]
+    )
     runtime = hass.data[DOMAIN].pop(entry.entry_id)
     await runtime.async_stop()
     return unloaded
