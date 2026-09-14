@@ -70,6 +70,23 @@ class ParkingStatusSensor(_PlateEntity):
         """Return the cached aggregate status without provider I/O."""
         return self._runtime.aggregate_for(self._plate.identifier).status
 
+    @property
+    def extra_state_attributes(self) -> dict[str, object]:
+        """Expose at most four normalized session details, never provider payloads."""
+        aggregate = self._runtime.aggregate_for(self._plate.identifier)
+        return {
+            "fees_complete": aggregate.fees_complete,
+            "sessions": [
+                {
+                    "provider": session.provider_id,
+                    "confidence": session.confidence,
+                    "started_at": session.started_at,
+                    "fee_meaning": session.fee.meaning if session.fee else None,
+                }
+                for session in aggregate.sessions[:4]
+            ],
+        }
+
 
 class ActiveSessionsSensor(_PlateEntity):
     """Expose the active confirmed-or-possibly-active session count."""
