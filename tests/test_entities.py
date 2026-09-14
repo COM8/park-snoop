@@ -1,6 +1,7 @@
 """Tests for stable, cached Park Snoop core entities."""
 
 from custom_components.park_snoop.binary_sensor import ParkedIndicator
+from custom_components.park_snoop.button import RecheckButton
 from custom_components.park_snoop.models import Plate
 from custom_components.park_snoop.runtime import ParkSnoopRuntime
 from custom_components.park_snoop.sensor import (
@@ -23,3 +24,17 @@ def test_core_entities_share_stable_plate_device_identity() -> None:
     assert parked.is_on is False  # noqa: S101
     assert status.device_info == count.device_info == parked.device_info  # noqa: S101
     assert status.unique_id != count.unique_id != parked.unique_id  # noqa: S101
+
+
+async def test_recheck_button_requests_each_selected_provider() -> None:
+    """The button delegates to scheduler-owned, deduplicated provider work."""
+    plate = Plate("BAB123", provider_ids=("betterpark", "parkdepot"))
+    scheduler = FakeScheduler()
+    runtime = ParkSnoopRuntime(scheduler, (plate,))  # type: ignore[arg-type]
+
+    await RecheckButton(runtime, plate).async_press()
+
+    assert scheduler.requested == [  # noqa: S101
+        ("BAB123", "betterpark"),
+        ("BAB123", "parkdepot"),
+    ]

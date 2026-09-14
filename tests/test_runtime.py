@@ -16,6 +16,7 @@ class FakeScheduler:
         """Create empty records for scheduling and cancellation calls."""
         self.scheduled: list[tuple[str, str]] = []
         self.cancelled: list[str] = []
+        self.requested: list[tuple[str, str]] = []
 
     async def async_schedule(
         self, plate: Plate, provider_id: str, due_at: datetime
@@ -27,6 +28,10 @@ class FakeScheduler:
     async def async_cancel_plate(self, plate_id: str) -> None:
         """Record cancellation for a removed plate."""
         self.cancelled.append(plate_id)
+
+    async def async_request_now(self, plate: Plate, provider_id: str) -> None:
+        """Record a manual request routed through the scheduler contract."""
+        self.requested.append((plate.identifier, provider_id))
 
     def async_start(self) -> None:
         """Provide the runtime's expected scheduler startup hook."""
