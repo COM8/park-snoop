@@ -63,6 +63,15 @@ class _PlateEntity(SensorEntity):
             identifiers={(DOMAIN, plate_id)}, name=plate.label, manufacturer=NAME
         )
 
+    async def async_added_to_hass(self) -> None:
+        """Subscribe this non-polling entity to normalized runtime updates."""
+        await super().async_added_to_hass()
+        self.async_on_remove(
+            self._runtime.add_state_listener(
+                self._plate.identifier, self.async_write_ha_state
+            )
+        )
+
 
 class ParkingStatusSensor(_PlateEntity):
     """Expose the primary automation-friendly parking status."""

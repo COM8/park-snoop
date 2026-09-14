@@ -30,6 +30,7 @@ class ParkSnoopRuntime:
         self._plates = {plate.identifier: plate for plate in plates}
         self._results: dict[str, dict[str, ProviderResult]] = {}
         self._currency_listeners: list[Callable[[Plate, str], None]] = []
+        self._state_listeners: dict[str, list[Callable[[], None]]] = {}
 
     @property
     def plates(self) -> tuple[Plate, ...]:
@@ -71,10 +72,25 @@ class ParkSnoopRuntime:
                 for currency in self.aggregate_for(result.plate).fee_totals:
                     for listener in self._currency_listeners:
                         listener(plate, currency)
+                for listener in self._state_listeners.get(result.plate, []):
+                    listener()
 
     def add_currency_listener(self, listener: Callable[[Plate, str], None]) -> None:
         """Notify a platform when a plate first exposes a currency-specific total."""
         self._currency_listeners.append(listener)
+
+    def add_state_listener(
+        self, plate_id: str, listener: Callable[[], None]
+    ) -> Callable[[], None]:
+        """Register an entity state callback and return an unload-safe remover."""
+        listeners = self._state_listeners.setdefault(plate_id, [])
+        listeners.append(listener)
+
+        def remove_listener() -> None:
+            """Remove the callback when its entity leaves Home Assistant."""
+            listeners.remove(listener)
+
+        return remove_listener
 
     async def async_start(self) -> None:
         """Schedule current records before starting the entry-owned scheduler."""
