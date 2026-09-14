@@ -156,3 +156,33 @@ def aggregate_sessions(sessions: list[ParkingSession]) -> AggregateState:
         status = ParkingStatus.NOT_PARKED
 
     return AggregateState(status, len(active), active, totals, fees_complete)
+
+
+def apply_provider_result(
+    sessions: tuple[ParkingSession, ...], result: ProviderResult
+) -> tuple[ParkingSession, ...]:
+    """Apply one result without falsely closing a session absent from a response."""
+    retained = [
+        session for session in sessions if session.provider_id != result.provider_id
+    ]
+    if result.outcome is ProviderOutcome.SUCCESS:
+        return (*retained, *result.sessions)
+    if result.outcome is ProviderOutcome.NO_PARKING:
+        return (
+            *retained,
+            *(
+                ParkingSession(
+                    session.provider_id,
+                    session.provider_session_id,
+                    SessionConfidence.POSSIBLY_ACTIVE,
+                    session.started_at,
+                    session.ended_at,
+                    session.location,
+                    session.fee,
+                )
+                for session in sessions
+                if session.provider_id == result.provider_id
+                and session.confidence is SessionConfidence.CONFIRMED
+            ),
+        )
+    return sessions

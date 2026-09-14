@@ -4,13 +4,18 @@ from dataclasses import replace
 from datetime import UTC, datetime
 from decimal import Decimal
 
+import pytest
+
 from custom_components.park_snoop.models import (
     Fee,
     FeeMeaning,
     ParkingSession,
     Plate,
+    ProviderOutcome,
+    ProviderResult,
     SessionConfidence,
     aggregate_sessions,
+    apply_provider_result,
     plate_unique_id,
 )
 
@@ -76,3 +81,40 @@ def test_plate_unique_id_is_stable_when_display_name_changes() -> None:
     renamed = replace(initial, display_name="Family car")
 
     assert plate_unique_id(initial.identifier) == plate_unique_id(renamed.identifier)  # noqa: S101
+
+
+@pytest.mark.parametrize(
+    ("sessions", "expected_status", "expected_totals"),
+    [
+        ([_session("betterpark", "one")], "parking", {}),
+        (
+            [_session("betterpark", "one"), _session("parkdepot", "two")],
+            "multiple_sessions",
+            {},
+        ),
+    ],
+)
+def test_aggregate_state_table(
+    sessions: list[ParkingSession],
+    expected_status: str,
+    expected_totals: dict[str, Decimal],
+) -> None:
+    """Aggregation preserves active-count, fee, and concurrency semantics."""
+    aggregate = aggregate_sessions(sessions)
+
+    assert aggregate.status == expected_status  # noqa: S101
+    assert aggregate.fee_totals == expected_totals  # noqa: S101
+
+
+def test_no_parking_keeps_prior_confirmed_session_possibly_active() -> None:
+    """A single absent provider record does not become a false closure."""
+    result = ProviderResult(
+        "BAB123",
+        "betterpark",
+        datetime(2026, 9, 6, tzinfo=UTC),
+        ProviderOutcome.NO_PARKING,
+    )
+
+    sessions = apply_provider_result((_session("betterpark", "one"),), result)
+
+    assert sessions[0].confidence is SessionConfidence.POSSIBLY_ACTIVE  # noqa: S101

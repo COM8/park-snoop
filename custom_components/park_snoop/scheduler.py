@@ -80,6 +80,10 @@ class MonitoringScheduler:
         if not self.is_running:
             self._task = asyncio.create_task(self._async_loop())
 
+    def set_result_listener(self, listener: ResultListener) -> None:
+        """Set the entry runtime callback before any provider work is dispatched."""
+        self._result_listener = listener
+
     async def async_stop(self) -> None:
         """Cancel work waiting for this entry and await its scheduler task."""
         task = self._task
@@ -111,6 +115,12 @@ class MonitoringScheduler:
             self._enqueue(key, plate, self._now())
             return
         self._enqueue(key, plate, self._now())
+
+    async def async_cancel_plate(self, plate_id: str) -> None:
+        """Discard queued work for a removed plate without interrupting other plates."""
+        for key in tuple(self._pending):
+            if key[0] == plate_id and key not in self._running:
+                self._pending.pop(key, None)
 
     async def async_run_due(self) -> None:
         """Dispatch all work that is due now; exposed for deterministic tests."""
