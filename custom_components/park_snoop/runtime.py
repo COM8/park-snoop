@@ -14,6 +14,8 @@ from .models import (
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from .scheduler import MonitoringScheduler
 
 
@@ -27,6 +29,7 @@ class ParkSnoopRuntime:
         self.scheduler = scheduler
         self._plates = {plate.identifier: plate for plate in plates}
         self._results: dict[str, dict[str, ProviderResult]] = {}
+        self._currency_listeners: list[Callable[[Plate, str], None]] = []
 
     @property
     def plates(self) -> tuple[Plate, ...]:
@@ -58,6 +61,14 @@ class ParkSnoopRuntime:
         for result in results:
             if result.plate in self._plates:
                 self._results.setdefault(result.plate, {})[result.provider_id] = result
+                plate = self._plates[result.plate]
+                for currency in self.aggregate_for(result.plate).fee_totals:
+                    for listener in self._currency_listeners:
+                        listener(plate, currency)
+
+    def add_currency_listener(self, listener: Callable[[Plate, str], None]) -> None:
+        """Notify a platform when a plate first exposes a currency-specific total."""
+        self._currency_listeners.append(listener)
 
     async def async_start(self) -> None:
         """Schedule current records before starting the entry-owned scheduler."""

@@ -4,13 +4,14 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from homeassistant.components.sensor import SensorEntity
+from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
 from homeassistant.helpers.device_registry import DeviceInfo
 
 from .const import DOMAIN, NAME
 
 if TYPE_CHECKING:
     from datetime import datetime
+    from decimal import Decimal
 
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
@@ -37,6 +38,12 @@ async def async_setup_entry(
         )
     ]
     async_add_entities(entities)
+
+    def add_currency_sensor(plate: Plate, currency: str) -> None:
+        """Add one currency-specific monetary entity when it first appears."""
+        async_add_entities([FeeTotalSensor(runtime, plate, currency)])
+
+    runtime.add_currency_listener(add_currency_sensor)
 
 
 class _PlateEntity(SensorEntity):
@@ -117,3 +124,23 @@ class LastCheckSensor(_PlateEntity):
     def native_value(self) -> datetime | None:
         """Return the cached last-check timestamp without provider I/O."""
         return self._runtime.last_check_for(self._plate.identifier)
+
+
+class FeeTotalSensor(_PlateEntity):
+    """Expose one currency-safe aggregate rather than an invalid cross-currency sum."""
+
+    _attr_device_class = SensorDeviceClass.MONETARY
+
+    def __init__(self, runtime: ParkSnoopRuntime, plate: Plate, currency: str) -> None:
+        """Create a stable monetary sensor for one plate and ISO currency."""
+        super().__init__(runtime, plate, f"fee_{currency.lower()}")
+        self._currency = currency
+        self._attr_name = f"Parking fees ({currency})"
+        self._attr_native_unit_of_measurement = currency
+
+    @property
+    def native_value(self) -> Decimal | None:
+        """Return only the cached total for this sensor's ISO currency."""
+        return self._runtime.aggregate_for(self._plate.identifier).fee_totals.get(
+            self._currency
+        )
