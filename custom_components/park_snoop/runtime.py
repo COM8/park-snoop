@@ -46,6 +46,13 @@ class ParkSnoopRuntime:
         ]
         return aggregate_sessions(sessions)
 
+    def last_check_for(self, plate_id: str) -> datetime | None:
+        """Return the newest normalized provider check time for one plate."""
+        checks = [
+            result.checked_at for result in self._results.get(plate_id, {}).values()
+        ]
+        return max(checks, default=None)
+
     async def async_handle_results(self, results: tuple[ProviderResult, ...]) -> None:
         """Cache normalized results for entity properties without retaining payloads."""
         for result in results:

@@ -10,6 +10,8 @@ from homeassistant.helpers.device_registry import DeviceInfo
 from .const import DOMAIN, NAME
 
 if TYPE_CHECKING:
+    from datetime import datetime
+
     from homeassistant.config_entries import ConfigEntry
     from homeassistant.core import HomeAssistant
     from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
@@ -31,6 +33,7 @@ async def async_setup_entry(
         for entity in (
             ParkingStatusSensor(runtime, plate),
             ActiveSessionsSensor(runtime, plate),
+            LastCheckSensor(runtime, plate),
         )
     ]
     async_add_entities(entities)
@@ -81,3 +84,19 @@ class ActiveSessionsSensor(_PlateEntity):
     def native_value(self) -> int:
         """Return the cached active-session count without provider I/O."""
         return self._runtime.aggregate_for(self._plate.identifier).active_session_count
+
+
+class LastCheckSensor(_PlateEntity):
+    """Expose the newest completed provider check as a diagnostic timestamp."""
+
+    _attr_name = "Last check"
+    _attr_entity_category = "diagnostic"
+
+    def __init__(self, runtime: ParkSnoopRuntime, plate: Plate) -> None:
+        """Create the diagnostic timestamp sensor for one plate."""
+        super().__init__(runtime, plate, "last_check")
+
+    @property
+    def native_value(self) -> datetime | None:
+        """Return the cached last-check timestamp without provider I/O."""
+        return self._runtime.last_check_for(self._plate.identifier)
