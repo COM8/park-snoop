@@ -30,6 +30,7 @@ class ParkSnoopRuntime:
         self._plates = {plate.identifier: plate for plate in plates}
         self._results: dict[str, dict[str, ProviderResult]] = {}
         self._currency_listeners: list[Callable[[Plate, str], None]] = []
+        self._published_currencies: set[tuple[str, str]] = set()
         self._state_listeners: dict[str, list[Callable[[], None]]] = {}
 
     @property
@@ -70,8 +71,11 @@ class ParkSnoopRuntime:
                 self._results.setdefault(result.plate, {})[result.provider_id] = result
                 plate = self._plates[result.plate]
                 for currency in self.aggregate_for(result.plate).fee_totals:
-                    for listener in self._currency_listeners:
-                        listener(plate, currency)
+                    key = (result.plate, currency)
+                    if key not in self._published_currencies:
+                        self._published_currencies.add(key)
+                        for listener in self._currency_listeners:
+                            listener(plate, currency)
                 for listener in self._state_listeners.get(result.plate, []):
                     listener()
 
