@@ -1,12 +1,15 @@
 """Tests for stable plate identity and runtime reconfiguration."""
 
-from typing import TYPE_CHECKING
+from datetime import UTC, datetime
 
-from custom_components.park_snoop.models import Plate
+from custom_components.park_snoop.models import (
+    ParkingSession,
+    Plate,
+    ProviderOutcome,
+    ProviderResult,
+    SessionConfidence,
+)
 from custom_components.park_snoop.runtime import ParkSnoopRuntime
-
-if TYPE_CHECKING:
-    from datetime import datetime
 
 
 class FakeScheduler:
@@ -63,3 +66,37 @@ async def test_removal_cancels_queued_plate_work() -> None:
     await runtime.async_reconfigure(())
 
     assert scheduler.cancelled == ["BAB123"]  # noqa: S101
+
+
+async def test_runtime_keeps_absent_session_possibly_active() -> None:
+    """Entity runtime applies the no-false-closure lifecycle transition."""
+    plate = Plate("BAB123", provider_ids=("betterpark",))
+    runtime = ParkSnoopRuntime(FakeScheduler(), (plate,))  # type: ignore[arg-type]
+    checked_at = datetime(2026, 9, 15, tzinfo=UTC)
+    await runtime.async_handle_results(
+        (
+            ProviderResult(
+                "BAB123",
+                "betterpark",
+                checked_at,
+                ProviderOutcome.SUCCESS,
+                (
+                    ParkingSession(
+                        "betterpark", "session", SessionConfidence.CONFIRMED
+                    ),
+                ),
+            ),
+        )
+    )
+    await runtime.async_handle_results(
+        (
+            ProviderResult(
+                "BAB123", "betterpark", checked_at, ProviderOutcome.NO_PARKING
+            ),
+        )
+    )
+
+    assert (  # noqa: S101
+        runtime.aggregate_for("BAB123").sessions[0].confidence
+        is SessionConfidence.POSSIBLY_ACTIVE
+    )

@@ -7,9 +7,11 @@ from typing import TYPE_CHECKING
 
 from .models import (
     AggregateState,
+    ParkingSession,
     Plate,
     ProviderResult,
     aggregate_sessions,
+    apply_provider_result,
     plate_unique_id,
 )
 
@@ -29,6 +31,7 @@ class ParkSnoopRuntime:
         self.scheduler = scheduler
         self._plates = {plate.identifier: plate for plate in plates}
         self._results: dict[str, dict[str, ProviderResult]] = {}
+        self._sessions: dict[str, tuple[ParkingSession, ...]] = {}
         self._currency_listeners: list[Callable[[Plate, str], None]] = []
         self._published_currencies: set[tuple[str, str]] = set()
         self._state_listeners: dict[str, list[Callable[[], None]]] = {}
@@ -44,12 +47,7 @@ class ParkSnoopRuntime:
 
     def aggregate_for(self, plate_id: str) -> AggregateState:
         """Return the current normalized aggregate for one configured plate."""
-        sessions = [
-            session
-            for result in self._results.get(plate_id, {}).values()
-            for session in result.sessions
-        ]
-        return aggregate_sessions(sessions)
+        return aggregate_sessions(list(self._sessions.get(plate_id, ())))
 
     def last_check_for(self, plate_id: str) -> datetime | None:
         """Return the newest normalized provider check time for one plate."""
@@ -69,6 +67,9 @@ class ParkSnoopRuntime:
         for result in results:
             if result.plate in self._plates:
                 self._results.setdefault(result.plate, {})[result.provider_id] = result
+                self._sessions[result.plate] = apply_provider_result(
+                    self._sessions.get(result.plate, ()), result
+                )
                 plate = self._plates[result.plate]
                 for currency in self.aggregate_for(result.plate).fee_totals:
                     key = (result.plate, currency)
