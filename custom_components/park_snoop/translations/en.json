@@ -29,6 +29,9 @@
                     "notes": "Notes",
                     "frequency_minutes": "Check interval (minutes)",
                     "provider_ids": "Parking providers"
+                },
+                "data_description": {
+                    "plate": "Enter the plate as it appears on the vehicle, for example `B-AB 123`. Spaces and hyphens are optional; letters are normalized to uppercase."
                 }
             },
             "select_edit": {
@@ -45,6 +48,9 @@
                     "notes": "Notes",
                     "frequency_minutes": "Check interval (minutes)",
                     "provider_ids": "Parking providers"
+                },
+                "data_description": {
+                    "plate": "Enter the plate as it appears on the vehicle, for example `B-AB 123`. Spaces and hyphens are optional; letters are normalized to uppercase."
                 }
             },
             "select_remove": {
