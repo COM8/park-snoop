@@ -85,4 +85,24 @@ async def test_entry_setup_adds_stable_plate_entities(
     )
     assert runtime.scheduler.pending_keys == (("BAB123", "betterpark"),)  # noqa: S101
 
+    hass.config_entries.async_update_entry(
+        entry,
+        options={
+            "plates": [
+                {
+                    "identifier": "BAB123",
+                    "display_name": "Family car",
+                    "frequency_minutes": 5,
+                    "provider_ids": ["betterpark"],
+                }
+            ]
+        },
+    )
+    await hass.async_block_till_done()
+    assert hass.states.get("sensor.car") is not None  # noqa: S101
+
+    hass.config_entries.async_update_entry(entry, options={"plates": []})
+    await hass.async_block_till_done()
+    assert hass.states.get("sensor.car") is None  # noqa: S101
+
     assert await hass.config_entries.async_unload(entry.entry_id)  # noqa: S101

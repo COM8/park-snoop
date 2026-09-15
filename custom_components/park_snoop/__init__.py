@@ -4,11 +4,12 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .config_flow import PLATES
 from .const import DOMAIN
-from .models import Plate
+from .models import Plate, plate_unique_id
 from .providers.betterpark import BetterParkProvider
 from .providers.parkdepot import ParkDepotProvider
 from .providers.registry import ProviderRegistry
@@ -70,4 +71,16 @@ async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def _async_entry_updated(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Reload platforms so changed or removed plate records rebuild cleanly."""
+    runtime: ParkSnoopRuntime = hass.data[DOMAIN][entry.entry_id]
+    current_ids = {plate.identifier for plate in runtime.plates}
+    updated_ids = {record["identifier"] for record in entry.options.get(PLATES, [])}
+    removed_prefixes = tuple(
+        f"{plate_unique_id(plate_id)}_" for plate_id in current_ids - updated_ids
+    )
+    if removed_prefixes:
+        entity_registry = er.async_get(hass)
+        entities = er.async_entries_for_config_entry(entity_registry, entry.entry_id)
+        for entity in entities:
+            if entity.unique_id.startswith(removed_prefixes):
+                entity_registry.async_remove(entity.entity_id)
     await hass.config_entries.async_reload(entry.entry_id)

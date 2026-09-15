@@ -8,7 +8,7 @@
 
 - [x] 2.1 Implement typed, documented models for normalized plates, provider results, sessions, fee meaning, session confidence, and aggregate state, and verify unit tests cover concurrent sessions, unknown fees, and mixed currencies.
 - [x] 2.2 Implement the initial config flow and options flow for adding, editing, and removing plates with display name, notes, frequency, and provider selection, and verify configuration-flow tests cover defaults and validation failures.
-- [ ] 2.3 Implement stable plate-derived identifiers and safe runtime reconfiguration/removal, and verify a rename preserves entity IDs while removal unloads the plate's entities and scheduled work.
+- [x] 2.3 Implement stable plate-derived identifiers and safe runtime reconfiguration/removal, and verify a rename preserves entity IDs while removal unloads the plate's entities and scheduled work.
 
 ## 3. Provider framework and initial adapters
 
