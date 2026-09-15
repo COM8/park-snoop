@@ -36,4 +36,4 @@
 - [x] 6.1 Rewrite README.md for normal users with HACS installation from `COM8/park-snoop`, setup, entities, manual checks, fee semantics, limitations, and privacy guidance, and verify it contains no provider-authoring deep dive.
 - [x] 6.2 Update issue templates and contributor-facing references from the blueprint project to Park Snoop, and verify all repository links target `COM8/park-snoop` where applicable.
 - [x] 6.3 Add a GitHub Actions test job running the full offline test suite on pull requests and default-branch pushes while retaining Ruff, Hassfest, and HACS checks, and verify the workflow syntax and local test command succeed.
-- [ ] 6.4 Run formatting, linting, all tests, Hassfest, HACS validation, and strict OpenSpec validation; fix all reported issues and record the final commands/results in the implementation handoff.
+- [x] 6.4 Run formatting, linting, all tests, Hassfest, HACS validation, and strict OpenSpec validation; fix all reported issues and record the final commands/results in the implementation handoff.

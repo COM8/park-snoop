@@ -15,5 +15,7 @@ Run on 2026-09-15 after the Park Snoop implementation changes:
 
 Hassfest and HACS validation are provided by GitHub Actions
 (`home-assistant/actions/hassfest` and `hacs/action`) rather than local command-line
-tools. The previously supplied GitHub Actions run was green; push the final commits
-to run those hosted checks for the final revision.
+tools. The validation workflow completed successfully for revision `9b5d324`,
+including both checks: <https://github.com/COM8/park-snoop/actions/runs/35003411361>.
+The offline test workflow also completed successfully:
+<https://github.com/COM8/park-snoop/actions/runs/35003411723>.
