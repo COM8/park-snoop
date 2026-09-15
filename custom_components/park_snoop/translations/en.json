@@ -12,6 +12,55 @@
             "already_configured": "This entry is already configured."
         }
     },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Manage monitored plates",
+                "description": "Add, edit, or remove a license plate.",
+                "data": {
+                    "operation": "Action"
+                }
+            },
+            "add": {
+                "title": "Add a license plate",
+                "data": {
+                    "plate": "License plate",
+                    "display_name": "Display name",
+                    "notes": "Notes",
+                    "frequency_minutes": "Check interval (minutes)",
+                    "provider_ids": "Parking providers"
+                }
+            },
+            "select_edit": {
+                "title": "Choose a license plate to edit",
+                "data": {
+                    "plate": "License plate"
+                }
+            },
+            "edit": {
+                "title": "Edit license plate",
+                "data": {
+                    "plate": "License plate",
+                    "display_name": "Display name",
+                    "notes": "Notes",
+                    "frequency_minutes": "Check interval (minutes)",
+                    "provider_ids": "Parking providers"
+                }
+            },
+            "select_remove": {
+                "title": "Choose a license plate to remove",
+                "data": {
+                    "plate": "License plate"
+                }
+            }
+        },
+        "error": {
+            "invalid_plate": "Enter a license plate.",
+            "duplicate": "This license plate is already monitored.",
+            "invalid_frequency": "The check interval must be at least one minute.",
+            "invalid_providers": "Select at least one supported parking provider."
+        }
+    },
     "entity": {
         "sensor": {
             "parking_status": {

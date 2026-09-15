@@ -48,6 +48,7 @@ async def test_options_add_plate_uses_defaults(hass: HomeAssistant) -> None:
             "provider_ids": ["betterpark", "parkdepot"],
         }
     ]
+    assert entry.options == result["data"]  # noqa: S101
 
 
 async def test_options_rejects_duplicate_plate_and_invalid_frequency(

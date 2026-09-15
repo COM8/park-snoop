@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any
 import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
+from homeassistant.helpers import selector
 
 from .const import DOMAIN, NAME
 from .models import normalize_plate
@@ -66,7 +67,11 @@ class ParkSnoopOptionsFlow(config_entries.OptionsFlow):
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
-                {vol.Required("operation"): vol.In(("add", "edit", "remove"))}
+                {
+                    vol.Required("operation"): selector.SelectSelector(
+                        selector.SelectSelectorConfig(options=["add", "edit", "remove"])
+                    )
+                }
             ),
         )
 
@@ -163,18 +168,28 @@ class ParkSnoopOptionsFlow(config_entries.OptionsFlow):
         values = values or {}
         return vol.Schema(
             {
-                vol.Required("plate", default=values.get("identifier", "")): str,
+                vol.Required(
+                    "plate", default=values.get("identifier", "")
+                ): selector.TextSelector(),
                 vol.Optional(
                     "display_name", default=values.get("display_name", "")
-                ): str,
-                vol.Optional("notes", default=values.get("notes", "")): str,
+                ): selector.TextSelector(),
+                vol.Optional("notes", default=values.get("notes", "")): (
+                    selector.TextSelector(selector.TextSelectorConfig(multiline=True))
+                ),
                 vol.Optional(
                     "frequency_minutes",
                     default=values.get("frequency_minutes", DEFAULT_FREQUENCY_MINUTES),
-                ): vol.Coerce(int),
+                ): selector.NumberSelector(
+                    selector.NumberSelectorConfig(mode=selector.NumberSelectorMode.BOX)
+                ),
                 vol.Optional(
                     "provider_ids", default=values.get("provider_ids", list(PROVIDERS))
-                ): [vol.In(PROVIDERS)],
+                ): selector.SelectSelector(
+                    selector.SelectSelectorConfig(
+                        options=list(PROVIDERS), multiple=True
+                    )
+                ),
             }
         )
 
@@ -184,12 +199,20 @@ class ParkSnoopOptionsFlow(config_entries.OptionsFlow):
         """Validate values independently so the UI can report every error."""
         errors: dict[str, str] = {}
         normalized = identifier or normalize_plate(str(user_input.get("plate", "")))
-        frequency = user_input.get("frequency_minutes", DEFAULT_FREQUENCY_MINUTES)
+        frequency_value = user_input.get("frequency_minutes", DEFAULT_FREQUENCY_MINUTES)
         provider_ids = user_input.get("provider_ids", list(PROVIDERS))
         if not normalized:
             errors["plate"] = "invalid_plate"
-        if not isinstance(frequency, int) or frequency < 1:
+        if (
+            isinstance(frequency_value, bool)
+            or not isinstance(frequency_value, int | float)
+            or not float(frequency_value).is_integer()
+            or frequency_value < 1
+        ):
             errors["frequency_minutes"] = "invalid_frequency"
+            frequency = 0
+        else:
+            frequency = int(frequency_value)
         if not provider_ids or any(
             provider not in PROVIDERS for provider in provider_ids
         ):
