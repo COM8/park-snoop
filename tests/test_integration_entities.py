@@ -77,4 +77,12 @@ async def test_entry_setup_adds_stable_plate_entities(
     assert fee.state == "2"  # noqa: S101
     assert fee.attributes["unit_of_measurement"] == "EUR"  # noqa: S101
 
+    await hass.services.async_call(
+        "button",
+        "press",
+        {"entity_id": "button.car_recheck"},
+        blocking=True,
+    )
+    assert runtime.scheduler.pending_keys == (("BAB123", "betterpark"),)  # noqa: S101
+
     assert await hass.config_entries.async_unload(entry.entry_id)  # noqa: S101
