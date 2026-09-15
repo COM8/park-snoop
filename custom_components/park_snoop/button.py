@@ -30,7 +30,8 @@ async def async_setup_entry(
 class RecheckButton(_PlateEntity, ButtonEntity):
     """Ask the scheduler for an immediate eligible check without bypassing limits."""
 
-    _attr_name = "Recheck"
+    _attr_icon = "mdi:refresh"
+    _attr_translation_key = "recheck"
 
     def __init__(self, runtime: ParkSnoopRuntime, plate: Plate) -> None:
         """Create a recheck control for one stable plate device."""

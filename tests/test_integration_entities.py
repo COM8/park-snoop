@@ -45,7 +45,7 @@ async def test_entry_setup_adds_stable_plate_entities(
     assert await hass.config_entries.async_setup(entry.entry_id)  # noqa: S101
     await hass.async_block_till_done()
 
-    assert hass.states.get("sensor.car") is not None  # noqa: S101
+    assert hass.states.get("sensor.car_parking_status") is not None  # noqa: S101
     assert hass.states.get("sensor.car_active_sessions") is not None  # noqa: S101
     assert hass.states.get("binary_sensor.car_parked") is not None  # noqa: S101
 
@@ -70,12 +70,23 @@ async def test_entry_setup_adds_stable_plate_entities(
     )
     await hass.async_block_till_done()
 
-    assert hass.states.get("sensor.car").state == "parking"  # noqa: S101
+    assert hass.states.get("sensor.car_parking_status").state == "parking"  # noqa: S101
     assert hass.states.get("sensor.car_active_sessions").state == "1"  # noqa: S101
     assert hass.states.get("binary_sensor.car_parked").state == "on"  # noqa: S101
     fee = hass.states.get("sensor.car_parking_fees_eur")
     assert fee.state == "2"  # noqa: S101
     assert fee.attributes["unit_of_measurement"] == "EUR"  # noqa: S101
+    status_attributes = hass.states.get("sensor.car_parking_status").attributes
+    assert status_attributes["sessions"] == [  # noqa: S101
+        {
+            "provider": "betterpark",
+            "confidence": "confirmed",
+            "started_at": None,
+            "fee_meaning": "accrued_estimate",
+        }
+    ]
+    assert "BAB123" not in str(status_attributes)  # noqa: S101
+    assert "raw_response" not in status_attributes  # noqa: S101
 
     await hass.services.async_call(
         "button",
@@ -99,10 +110,10 @@ async def test_entry_setup_adds_stable_plate_entities(
         },
     )
     await hass.async_block_till_done()
-    assert hass.states.get("sensor.car") is not None  # noqa: S101
+    assert hass.states.get("sensor.car_parking_status") is not None  # noqa: S101
 
     hass.config_entries.async_update_entry(entry, options={"plates": []})
     await hass.async_block_till_done()
-    assert hass.states.get("sensor.car") is None  # noqa: S101
+    assert hass.states.get("sensor.car_parking_status") is None  # noqa: S101
 
     assert await hass.config_entries.async_unload(entry.entry_id)  # noqa: S101

@@ -78,7 +78,8 @@ class _PlateEntity(Entity):
 class ParkingStatusSensor(_PlateEntity, SensorEntity):
     """Expose the primary automation-friendly parking status."""
 
-    _attr_name = None
+    _attr_icon = "mdi:car"
+    _attr_translation_key = "parking_status"
 
     def __init__(self, runtime: ParkSnoopRuntime, plate: Plate) -> None:
         """Create the primary sensor for one plate device."""
@@ -110,7 +111,8 @@ class ParkingStatusSensor(_PlateEntity, SensorEntity):
 class ActiveSessionsSensor(_PlateEntity, SensorEntity):
     """Expose the active confirmed-or-possibly-active session count."""
 
-    _attr_name = "Active sessions"
+    _attr_icon = "mdi:counter"
+    _attr_translation_key = "active_sessions"
 
     def __init__(self, runtime: ParkSnoopRuntime, plate: Plate) -> None:
         """Create the count sensor for one plate device."""
@@ -125,8 +127,10 @@ class ActiveSessionsSensor(_PlateEntity, SensorEntity):
 class LastCheckSensor(_PlateEntity, SensorEntity):
     """Expose the newest completed provider check as a diagnostic timestamp."""
 
-    _attr_name = "Last check"
     _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_entity_registry_enabled_default = False
+    _attr_icon = "mdi:clock-check-outline"
+    _attr_translation_key = "last_check"
 
     def __init__(self, runtime: ParkSnoopRuntime, plate: Plate) -> None:
         """Create the diagnostic timestamp sensor for one plate."""
@@ -141,8 +145,10 @@ class LastCheckSensor(_PlateEntity, SensorEntity):
 class NextCheckSensor(_PlateEntity, SensorEntity):
     """Expose the next configured monitoring deadline as a diagnostic timestamp."""
 
-    _attr_name = "Next check"
     _attr_entity_category = EntityCategory.DIAGNOSTIC
+    _attr_entity_registry_enabled_default = False
+    _attr_icon = "mdi:clock-outline"
+    _attr_translation_key = "next_check"
 
     def __init__(self, runtime: ParkSnoopRuntime, plate: Plate) -> None:
         """Create the next-check diagnostic timestamp for one plate."""
@@ -158,13 +164,15 @@ class FeeTotalSensor(_PlateEntity, SensorEntity):
     """Expose one currency-safe aggregate rather than an invalid cross-currency sum."""
 
     _attr_device_class = SensorDeviceClass.MONETARY
+    _attr_icon = "mdi:cash"
+    _attr_translation_key = "parking_fees"
 
     def __init__(self, runtime: ParkSnoopRuntime, plate: Plate, currency: str) -> None:
         """Create a stable monetary sensor for one plate and ISO currency."""
         super().__init__(runtime, plate, f"fee_{currency.lower()}")
         self._currency = currency
-        self._attr_name = f"Parking fees ({currency})"
         self._attr_native_unit_of_measurement = currency
+        self._attr_translation_placeholders = {"currency": currency}
 
     @property
     def native_value(self) -> Decimal | None:

@@ -11,5 +11,43 @@
         "abort": {
             "already_configured": "This entry is already configured."
         }
+    },
+    "entity": {
+        "sensor": {
+            "parking_status": {
+                "name": "Parking status",
+                "state": {
+                    "not_parked": "Not parked",
+                    "parking": "Parking",
+                    "multiple_sessions": "Multiple sessions",
+                    "uncertain": "Uncertain",
+                    "unknown": "Unknown",
+                    "rate_limited": "Rate limited",
+                    "error": "Error"
+                }
+            },
+            "active_sessions": {
+                "name": "Active sessions"
+            },
+            "last_check": {
+                "name": "Last check"
+            },
+            "next_check": {
+                "name": "Next check"
+            },
+            "parking_fees": {
+                "name": "Parking fees ({currency})"
+            }
+        },
+        "binary_sensor": {
+            "parked": {
+                "name": "Parked"
+            }
+        },
+        "button": {
+            "recheck": {
+                "name": "Recheck"
+            }
+        }
     }
 }

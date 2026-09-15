@@ -30,7 +30,8 @@ async def async_setup_entry(
 class ParkedIndicator(_PlateEntity, BinarySensorEntity):
     """Indicate whether cached results show one or more active sessions."""
 
-    _attr_name = "Parked"
+    _attr_icon = "mdi:car"
+    _attr_translation_key = "parked"
 
     def __init__(self, runtime: ParkSnoopRuntime, plate: Plate) -> None:
         """Create a parked indicator for one stable plate device."""
