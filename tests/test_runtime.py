@@ -80,11 +80,7 @@ async def test_runtime_keeps_absent_session_possibly_active() -> None:
                 "betterpark",
                 checked_at,
                 ProviderOutcome.SUCCESS,
-                (
-                    ParkingSession(
-                        "betterpark", "session", SessionConfidence.CONFIRMED
-                    ),
-                ),
+                (ParkingSession("betterpark", "session", SessionConfidence.CONFIRMED),),
             ),
         )
     )

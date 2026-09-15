@@ -5,7 +5,9 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorEntity
+from homeassistant.const import EntityCategory
 from homeassistant.helpers.device_registry import DeviceInfo
+from homeassistant.helpers.entity import Entity
 
 from .const import DOMAIN, NAME
 
@@ -47,7 +49,7 @@ async def async_setup_entry(
     runtime.add_currency_listener(add_currency_sensor)
 
 
-class _PlateEntity(SensorEntity):
+class _PlateEntity(Entity):
     """Common in-memory identity and device descriptor for a plate sensor."""
 
     _attr_has_entity_name = True
@@ -73,7 +75,7 @@ class _PlateEntity(SensorEntity):
         )
 
 
-class ParkingStatusSensor(_PlateEntity):
+class ParkingStatusSensor(_PlateEntity, SensorEntity):
     """Expose the primary automation-friendly parking status."""
 
     _attr_name = None
@@ -105,7 +107,7 @@ class ParkingStatusSensor(_PlateEntity):
         }
 
 
-class ActiveSessionsSensor(_PlateEntity):
+class ActiveSessionsSensor(_PlateEntity, SensorEntity):
     """Expose the active confirmed-or-possibly-active session count."""
 
     _attr_name = "Active sessions"
@@ -120,11 +122,11 @@ class ActiveSessionsSensor(_PlateEntity):
         return self._runtime.aggregate_for(self._plate.identifier).active_session_count
 
 
-class LastCheckSensor(_PlateEntity):
+class LastCheckSensor(_PlateEntity, SensorEntity):
     """Expose the newest completed provider check as a diagnostic timestamp."""
 
     _attr_name = "Last check"
-    _attr_entity_category = "diagnostic"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     def __init__(self, runtime: ParkSnoopRuntime, plate: Plate) -> None:
         """Create the diagnostic timestamp sensor for one plate."""
@@ -136,11 +138,11 @@ class LastCheckSensor(_PlateEntity):
         return self._runtime.last_check_for(self._plate.identifier)
 
 
-class NextCheckSensor(_PlateEntity):
+class NextCheckSensor(_PlateEntity, SensorEntity):
     """Expose the next configured monitoring deadline as a diagnostic timestamp."""
 
     _attr_name = "Next check"
-    _attr_entity_category = "diagnostic"
+    _attr_entity_category = EntityCategory.DIAGNOSTIC
 
     def __init__(self, runtime: ParkSnoopRuntime, plate: Plate) -> None:
         """Create the next-check diagnostic timestamp for one plate."""
@@ -152,7 +154,7 @@ class NextCheckSensor(_PlateEntity):
         return self._runtime.next_check_for(self._plate.identifier)
 
 
-class FeeTotalSensor(_PlateEntity):
+class FeeTotalSensor(_PlateEntity, SensorEntity):
     """Expose one currency-safe aggregate rather than an invalid cross-currency sum."""
 
     _attr_device_class = SensorDeviceClass.MONETARY

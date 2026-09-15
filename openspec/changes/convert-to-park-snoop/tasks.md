@@ -26,7 +26,7 @@
 
 ## 5. Home Assistant entities and diagnostics
 
-- [ ] 5.1 Implement a logical device and stable entities per plate for primary parking state, active-session count, parked indicator, per-currency fee totals, and last/next-check diagnostics, and verify Home Assistant entity tests assert state, device grouping, units, and unique IDs.
+- [x] 5.1 Implement a logical device and stable entities per plate for primary parking state, active-session count, parked indicator, per-currency fee totals, and last/next-check diagnostics, and verify Home Assistant entity tests assert state, device grouping, units, and unique IDs.
 - [ ] 5.2 Implement the manual-recheck button as a scheduler request that remains subject to deduplication and provider limits, and verify an integration test covers button invocation during a pending job.
 - [ ] 5.3 Add concise bounded session details, translated entity names/states, icon handling, and entity categories/default enablement consistent with Home Assistant guidance, and verify the integration tests do not expose raw provider payloads.
 - [x] 5.4 Implement redacted diagnostics and logging for plates, locations, and provider payloads, and verify tests prove default diagnostic output does not contain configured plate values or raw response bodies.
